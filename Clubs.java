@@ -4,7 +4,7 @@ import javax.swing.JButton;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
 
-public class ClubActivityManager {
+public class Clubs {
     public static void main(String[] args) {
         JFrame frame = new JFrame("Club Details Manager");
         frame.setSize(420, 450);
@@ -57,4 +57,4 @@ public class ClubActivityManager {
         frame.setLocationRelativeTo(null); 
         frame.setVisible(true);
     }
-}
+}testing
