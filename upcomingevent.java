@@ -6,15 +6,17 @@ import java.awt.*;
 
 public class upcomingevent extends JFrame {
 
-    private JTable eventsTable;
-    private DefaultTableModel tableModel;
+    private JTable yourClubsTable;
+    private DefaultTableModel yourClubsModel;
+    private JTable otherClubsTable;
+    private DefaultTableModel otherClubsModel;
     private JTextField searchField;
     private JComboBox<String> categoryFilter;
 
     public upcomingevent() {
         setTitle("Campus Events Portal - Student View");
-        setSize(980, 620);
-        setMinimumSize(new Dimension(850, 520));
+        setSize(980, 650);
+        setMinimumSize(new Dimension(850, 550));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
@@ -32,7 +34,7 @@ public class upcomingevent extends JFrame {
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 22));
         titleLabel.setForeground(Color.WHITE);
 
-        JLabel subtitleLabel = new JLabel("Discover upcoming activities, register for events, and track your participation");
+        JLabel subtitleLabel = new JLabel("Discover upcoming activities from your clubs and across campus");
         subtitleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         subtitleLabel.setForeground(new Color(235, 245, 255));
 
@@ -75,38 +77,70 @@ public class upcomingevent extends JFrame {
 
         String[] columnNames = {"Event ID", "Event Name", "Host Club", "Date", "Time", "Venue", "Status"};
 
-        Object[][] sampleData = {
+        Object[][] yourClubsData = {
             {"E101", "Hackathon 2026", "Tech Club", "10-Oct-2026", "09:00 AM", "Auditorium A", "Open"},
-            {"E102", "Annual Music Night", "Cultural Club", "15-Oct-2026", "05:00 PM", "Open Air Theatre", "Open"},
             {"E103", "Inter-Department Football", "Sports Club", "18-Oct-2026", "03:00 PM", "Sports Ground", "Registered"},
+            {"E106", "Tech Symposium 2026", "IEEE Student Branch", "25-Oct-2026", "10:00 AM", "Main Seminar Hall", "Open"}
+        };
+
+        Object[][] otherClubsData = {
+            {"E102", "Annual Music Night", "Cultural Club", "15-Oct-2026", "05:00 PM", "Open Air Theatre", "Open"},
             {"E104", "Debate Championship", "Literary Society", "22-Oct-2026", "11:00 AM", "Seminar Hall 2", "Open"},
             {"E105", "Blood Donation Camp", "NSS Unit", "28-Oct-2026", "09:30 AM", "Student Activity Center", "Open"}
         };
 
-        tableModel = new DefaultTableModel(sampleData, columnNames) {
+        yourClubsModel = new DefaultTableModel(yourClubsData, columnNames) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
 
-        eventsTable = new JTable(tableModel);
-        eventsTable.setRowHeight(30);
-        eventsTable.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        eventsTable.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
-        eventsTable.getTableHeader().setBackground(new Color(230, 238, 248));
-        eventsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        otherClubsModel = new DefaultTableModel(otherClubsData, columnNames) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
 
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-        eventsTable.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
-        eventsTable.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
-        eventsTable.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
-        eventsTable.getColumnModel().getColumn(6).setCellRenderer(centerRenderer);
+        yourClubsTable = createStyledTable(yourClubsModel);
+        otherClubsTable = createStyledTable(otherClubsModel);
 
-        JScrollPane scrollPane = new JScrollPane(eventsTable);
-        centerPanel.add(scrollPane, BorderLayout.CENTER);
+        yourClubsTable.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting() && yourClubsTable.getSelectedRow() != -1) {
+                otherClubsTable.clearSelection();
+            }
+        });
 
+        otherClubsTable.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting() && otherClubsTable.getSelectedRow() != -1) {
+                yourClubsTable.clearSelection();
+            }
+        });
+
+        JPanel tablesContainer = new JPanel(new GridLayout(2, 1, 0, 12));
+        tablesContainer.setOpaque(false);
+
+        JPanel yourClubsPanel = new JPanel(new BorderLayout(0, 6));
+        yourClubsPanel.setOpaque(false);
+        JLabel yourClubsLabel = new JLabel("Upcoming Events from Your Joined Clubs");
+        yourClubsLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        yourClubsLabel.setForeground(new Color(41, 128, 185));
+        yourClubsPanel.add(yourClubsLabel, BorderLayout.NORTH);
+        yourClubsPanel.add(new JScrollPane(yourClubsTable), BorderLayout.CENTER);
+
+        JPanel otherClubsPanel = new JPanel(new BorderLayout(0, 6));
+        otherClubsPanel.setOpaque(false);
+        JLabel otherClubsLabel = new JLabel("Upcoming Events from Other Campus Clubs");
+        otherClubsLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        otherClubsLabel.setForeground(new Color(100, 110, 120));
+        otherClubsPanel.add(otherClubsLabel, BorderLayout.NORTH);
+        otherClubsPanel.add(new JScrollPane(otherClubsTable), BorderLayout.CENTER);
+
+        tablesContainer.add(yourClubsPanel);
+        tablesContainer.add(otherClubsPanel);
+
+        centerPanel.add(tablesContainer, BorderLayout.CENTER);
         add(centerPanel, BorderLayout.CENTER);
 
         JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 12, 12));
@@ -140,27 +174,31 @@ public class upcomingevent extends JFrame {
         add(actionPanel, BorderLayout.SOUTH);
 
         registerBtn.addActionListener(e -> {
-            int selectedRow = eventsTable.getSelectedRow();
-            if (selectedRow != -1) {
-                String eventName = (String) tableModel.getValueAt(selectedRow, 1);
-                String clubName = (String) tableModel.getValueAt(selectedRow, 2);
+            JTable activeTable = getSelectedTable();
+            if (activeTable != null) {
+                int selectedRow = activeTable.getSelectedRow();
+                DefaultTableModel activeModel = (DefaultTableModel) activeTable.getModel();
+                String eventName = (String) activeModel.getValueAt(selectedRow, 1);
+                String clubName = (String) activeModel.getValueAt(selectedRow, 2);
                 openStudentRegisterDialog(eventName, clubName);
             } else {
                 JOptionPane.showMessageDialog(upcomingevent.this,
-                        "Please select an event from the table to register.",
+                        "Please select an event from either table to register.",
                         "No Event Selected",
                         JOptionPane.WARNING_MESSAGE);
             }
         });
 
         viewDetailsBtn.addActionListener(e -> {
-            int selectedRow = eventsTable.getSelectedRow();
-            if (selectedRow != -1) {
-                String eventName = (String) tableModel.getValueAt(selectedRow, 1);
-                String clubName = (String) tableModel.getValueAt(selectedRow, 2);
-                String date = (String) tableModel.getValueAt(selectedRow, 3);
-                String time = (String) tableModel.getValueAt(selectedRow, 4);
-                String venue = (String) tableModel.getValueAt(selectedRow, 5);
+            JTable activeTable = getSelectedTable();
+            if (activeTable != null) {
+                int selectedRow = activeTable.getSelectedRow();
+                DefaultTableModel activeModel = (DefaultTableModel) activeTable.getModel();
+                String eventName = (String) activeModel.getValueAt(selectedRow, 1);
+                String clubName = (String) activeModel.getValueAt(selectedRow, 2);
+                String date = (String) activeModel.getValueAt(selectedRow, 3);
+                String time = (String) activeModel.getValueAt(selectedRow, 4);
+                String venue = (String) activeModel.getValueAt(selectedRow, 5);
                 openEventDetailsDialog(eventName, clubName, date, time, venue);
             } else {
                 JOptionPane.showMessageDialog(upcomingevent.this,
@@ -171,6 +209,33 @@ public class upcomingevent extends JFrame {
         });
 
         myRegistrationsBtn.addActionListener(e -> openMyRegistrationsDialog());
+    }
+
+    private JTable createStyledTable(DefaultTableModel model) {
+        JTable table = new JTable(model);
+        table.setRowHeight(28);
+        table.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
+        table.getTableHeader().setBackground(new Color(230, 238, 248));
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        table.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+        table.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
+        table.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
+        table.getColumnModel().getColumn(6).setCellRenderer(centerRenderer);
+
+        return table;
+    }
+
+    private JTable getSelectedTable() {
+        if (yourClubsTable.getSelectedRow() != -1) {
+            return yourClubsTable;
+        } else if (otherClubsTable.getSelectedRow() != -1) {
+            return otherClubsTable;
+        }
+        return null;
     }
 
     private void openStudentRegisterDialog(String eventName, String club) {
@@ -207,7 +272,10 @@ public class upcomingevent extends JFrame {
         confirmBtn.setBackground(new Color(46, 204, 113));
         confirmBtn.setForeground(Color.WHITE);
 
-        confirmBtn.addActionListener(e -> regDialog.dispose());
+        confirmBtn.addActionListener(e -> {
+            JOptionPane.showMessageDialog(regDialog, "Registered Successfully");
+            regDialog.dispose();
+        });
         cancelBtn.addActionListener(e -> regDialog.dispose());
 
         buttonPanel.add(confirmBtn);
@@ -251,25 +319,61 @@ public class upcomingevent extends JFrame {
 
     private void openMyRegistrationsDialog() {
         JDialog myRegDialog = new JDialog(this, "My Registered Events", true);
-        myRegDialog.setSize(500, 350);
+        myRegDialog.setSize(620, 500);
         myRegDialog.setLocationRelativeTo(this);
         myRegDialog.setLayout(new BorderLayout());
 
-        String[] cols = {"Event Name", "Club", "Date", "Venue"};
-        Object[][] myEventsData = {
+        JPanel contentPanel = new JPanel(new GridLayout(2, 1, 0, 10));
+        contentPanel.setBorder(new EmptyBorder(10, 15, 10, 15));
+
+        JPanel upcomingPanel = new JPanel(new BorderLayout(0, 5));
+        JLabel upcomingLabel = new JLabel("Upcoming Registered Events");
+        upcomingLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        upcomingLabel.setForeground(new Color(52, 152, 219));
+
+        String[] upcomingCols = {"Event Name", "Club", "Date", "Venue"};
+        Object[][] upcomingData = {
             {"Inter-Department Football", "Sports Club", "18-Oct-2026", "Sports Ground"}
         };
 
-        DefaultTableModel myModel = new DefaultTableModel(myEventsData, cols) {
+        DefaultTableModel upcomingModel = new DefaultTableModel(upcomingData, upcomingCols) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
 
-        JTable myTable = new JTable(myModel);
-        myTable.setRowHeight(25);
-        JScrollPane scrollPane = new JScrollPane(myTable);
+        JTable upcomingTable = new JTable(upcomingModel);
+        upcomingTable.setRowHeight(25);
+        upcomingPanel.add(upcomingLabel, BorderLayout.NORTH);
+        upcomingPanel.add(new JScrollPane(upcomingTable), BorderLayout.CENTER);
+
+        JPanel completedPanel = new JPanel(new BorderLayout(0, 5));
+        JLabel completedLabel = new JLabel("Completed Events & Participation");
+        completedLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        completedLabel.setForeground(new Color(46, 204, 113));
+
+        String[] completedCols = {"Event Name", "Club", "Date", "Position / Status"};
+        Object[][] completedData = {
+            {"Web Design Contest", "Tech Club", "12-Sep-2026", "1st Place (Winner)"},
+            {"Campus Chess Championship", "Sports Club", "05-Sep-2026", "2nd Runner Up"},
+            {"Tree Plantation Drive", "NSS Unit", "20-Aug-2026", "Participated"}
+        };
+
+        DefaultTableModel completedModel = new DefaultTableModel(completedData, completedCols) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        JTable completedTable = new JTable(completedModel);
+        completedTable.setRowHeight(25);
+        completedPanel.add(completedLabel, BorderLayout.NORTH);
+        completedPanel.add(new JScrollPane(completedTable), BorderLayout.CENTER);
+
+        contentPanel.add(upcomingPanel);
+        contentPanel.add(completedPanel);
 
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton cancelRegBtn = new JButton("Cancel Registration");
@@ -281,7 +385,7 @@ public class upcomingevent extends JFrame {
         bottomPanel.add(cancelRegBtn);
         bottomPanel.add(closeBtn);
 
-        myRegDialog.add(scrollPane, BorderLayout.CENTER);
+        myRegDialog.add(contentPanel, BorderLayout.CENTER);
         myRegDialog.add(bottomPanel, BorderLayout.SOUTH);
         myRegDialog.setVisible(true);
     }

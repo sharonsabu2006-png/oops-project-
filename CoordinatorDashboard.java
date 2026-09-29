@@ -31,7 +31,7 @@ public class CoordinatorDashboard extends JFrame {
         sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
         sidebar.setBorder(new EmptyBorder(25, 15, 20, 15));
 
-        JLabel logo = new JLabel("🎓  ClubConnect");
+        JLabel logo = new JLabel("🎓  Club Activity Manager");
         logo.setForeground(Color.WHITE);
         logo.setFont(new Font("Arial", Font.BOLD, 21));
         logo.setAlignmentX(Component.LEFT_ALIGNMENT);
