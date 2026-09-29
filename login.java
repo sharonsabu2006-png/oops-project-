@@ -1,10 +1,9 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
@@ -14,7 +13,6 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
 public class login extends JFrame implements ActionListener {
@@ -23,93 +21,144 @@ public class login extends JFrame implements ActionListener {
     JButton coordinatorButton;
     JButton exitButton;
 
-    login() {
+    public login() {
+        this.setTitle("College Club Activity Manager");
+        this.setSize(680, 430);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setLocationRelativeTo(null);
+        this.setLayout(new BorderLayout());
+
+        Color navy = new Color(16, 42, 86);
+        Color blue = new Color(52, 152, 219);
+        Color bgLight = new Color(244, 247, 251);
+        Color textDark = new Color(23, 32, 51);
+        Color textGray = new Color(110, 120, 135);
+        Color borderColor = new Color(220, 226, 235);
+
+        this.getContentPane().setBackground(bgLight);
+
         JPanel headerPanel = new JPanel();
-        headerPanel.setBackground(new Color(20, 36, 60));
+        headerPanel.setBackground(navy);
         headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
-        headerPanel.setBorder(new EmptyBorder(20, 10, 20, 10));
+        headerPanel.setBorder(new EmptyBorder(22, 30, 22, 30));
 
         JLabel titleLabel = new JLabel("College Club Activity Manager");
-        titleLabel.setForeground(new Color(0, 180, 216));
-        titleLabel.setFont(new Font("SansSerif", Font.BOLD, 24));
-        titleLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+        titleLabel.setForeground(Color.WHITE);
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
 
-        JLabel subTitleLabel = new JLabel("B.Tech OOP Project | Campus Activity Portal");
-        subTitleLabel.setForeground(Color.LIGHT_GRAY);
-        subTitleLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
-        subTitleLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+        JLabel subTitleLabel = new JLabel("B.Tech OOP Project  |  Campus Club & Event Management Portal");
+        subTitleLabel.setForeground(new Color(190, 210, 240));
+        subTitleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
 
         headerPanel.add(titleLabel);
-        headerPanel.add(Box.createRigidArea(new Dimension(0, 8)));
+        headerPanel.add(Box.createVerticalStrut(5));
         headerPanel.add(subTitleLabel);
-
-        JLabel promptLabel = new JLabel("Select your role to continue:");
-        promptLabel.setForeground(Color.WHITE);
-        promptLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
-
-        Border buttonBorder = BorderFactory.createLineBorder(new Color(0, 180, 216), 2);
-
-        memberButton = new JButton("Member Portal (View & Join Clubs)");
-        memberButton.setPreferredSize(new Dimension(320, 45));
-        memberButton.setFont(new Font("SansSerif", Font.BOLD, 14));
-        memberButton.setBackground(new Color(0, 150, 199));
-        memberButton.setForeground(Color.WHITE);
-        memberButton.setBorder(buttonBorder);
-        memberButton.setFocusable(false);
-        memberButton.addActionListener(this);
-
-        coordinatorButton = new JButton("Coordinator Login (Manage Events)");
-        coordinatorButton.setPreferredSize(new Dimension(320, 45));
-        coordinatorButton.setFont(new Font("SansSerif", Font.BOLD, 14));
-        coordinatorButton.setBackground(new Color(20, 36, 60));
-        coordinatorButton.setForeground(new Color(0, 180, 216));
-        coordinatorButton.setBorder(buttonBorder);
-        coordinatorButton.setFocusable(false);
-        coordinatorButton.addActionListener(this);
-
-        exitButton = new JButton("Exit");
-        exitButton.setPreferredSize(new Dimension(130, 35));
-        exitButton.setFont(new Font("SansSerif", Font.BOLD, 13));
-        exitButton.setBackground(new Color(180, 40, 40));
-        exitButton.setForeground(Color.WHITE);
-        exitButton.setFocusable(false);
-        exitButton.addActionListener(this);
-
-        this.setTitle("College Club Activity Manager");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setResizable(true);
-        this.setSize(600, 450);
-        this.setLayout(new BorderLayout());
-        this.getContentPane().setBackground(new Color(10, 18, 32));
 
         this.add(headerPanel, BorderLayout.NORTH);
 
-        JPanel centerPanel = new JPanel(new GridBagLayout());
-        centerPanel.setOpaque(false);
+        JPanel centerContainer = new JPanel(new BorderLayout(0, 12));
+        centerContainer.setOpaque(false);
+        centerContainer.setBorder(new EmptyBorder(20, 30, 20, 30));
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.anchor = GridBagConstraints.CENTER;
+        JLabel promptLabel = new JLabel("Select a portal to continue:");
+        promptLabel.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        promptLabel.setForeground(textDark);
+        centerContainer.add(promptLabel, BorderLayout.NORTH);
 
-        gbc.gridy = 0;
-        gbc.insets = new Insets(10, 0, 15, 0);
-        centerPanel.add(promptLabel, gbc);
+        JPanel cardsPanel = new JPanel(new GridLayout(1, 2, 20, 0));
+        cardsPanel.setOpaque(false);
 
-        gbc.gridy = 1;
-        gbc.insets = new Insets(0, 0, 12, 0);
-        centerPanel.add(memberButton, gbc);
+        JPanel memberCard = new JPanel(new BorderLayout(0, 12));
+        memberCard.setBackground(Color.WHITE);
+        memberCard.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(borderColor, 1),
+                new EmptyBorder(20, 20, 20, 20)
+        ));
 
-        gbc.gridy = 2;
-        gbc.insets = new Insets(0, 0, 20, 0);
-        centerPanel.add(coordinatorButton, gbc);
+        JPanel memberTextPanel = new JPanel();
+        memberTextPanel.setOpaque(false);
+        memberTextPanel.setLayout(new BoxLayout(memberTextPanel, BoxLayout.Y_AXIS));
 
-        gbc.gridy = 3;
-        gbc.insets = new Insets(0, 0, 10, 0);
-        centerPanel.add(exitButton, gbc);
+        JLabel memberTitle = new JLabel("Student Member Portal");
+        memberTitle.setFont(new Font("Segoe UI", Font.BOLD, 17));
+        memberTitle.setForeground(textDark);
 
-        this.add(centerPanel, BorderLayout.CENTER);
+        JLabel memberDesc = new JLabel("<html>Explore active campus clubs, join new communities, and register for upcoming events.</html>");
+        memberDesc.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        memberDesc.setForeground(textGray);
 
-        this.setLocationRelativeTo(null);
+        memberTextPanel.add(memberTitle);
+        memberTextPanel.add(Box.createVerticalStrut(8));
+        memberTextPanel.add(memberDesc);
+
+        memberButton = new JButton("Open Member Portal");
+        memberButton.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        memberButton.setBackground(blue);
+        memberButton.setForeground(Color.WHITE);
+        memberButton.setOpaque(true);
+        memberButton.setBorderPainted(false);
+        memberButton.setFocusPainted(false);
+        memberButton.setPreferredSize(new Dimension(0, 38));
+        memberButton.addActionListener(this);
+
+        memberCard.add(memberTextPanel, BorderLayout.CENTER);
+        memberCard.add(memberButton, BorderLayout.SOUTH);
+
+        JPanel coordCard = new JPanel(new BorderLayout(0, 12));
+        coordCard.setBackground(Color.WHITE);
+        coordCard.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(borderColor, 1),
+                new EmptyBorder(20, 20, 20, 20)
+        ));
+
+        JPanel coordTextPanel = new JPanel();
+        coordTextPanel.setOpaque(false);
+        coordTextPanel.setLayout(new BoxLayout(coordTextPanel, BoxLayout.Y_AXIS));
+
+        JLabel coordTitle = new JLabel("Coordinator Portal");
+        coordTitle.setFont(new Font("Segoe UI", Font.BOLD, 17));
+        coordTitle.setForeground(textDark);
+
+        JLabel coordDesc = new JLabel("<html>Manage club memberships, schedule new campus activities, and track event participation.</html>");
+        coordDesc.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        coordDesc.setForeground(textGray);
+
+        coordTextPanel.add(coordTitle);
+        coordTextPanel.add(Box.createVerticalStrut(8));
+        coordTextPanel.add(coordDesc);
+
+        coordinatorButton = new JButton("Coordinator Login");
+        coordinatorButton.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        coordinatorButton.setBackground(navy);
+        coordinatorButton.setForeground(Color.WHITE);
+        coordinatorButton.setOpaque(true);
+        coordinatorButton.setBorderPainted(false);
+        coordinatorButton.setFocusPainted(false);
+        coordinatorButton.setPreferredSize(new Dimension(0, 38));
+        coordinatorButton.addActionListener(this);
+
+        coordCard.add(coordTextPanel, BorderLayout.CENTER);
+        coordCard.add(coordinatorButton, BorderLayout.SOUTH);
+
+        cardsPanel.add(memberCard);
+        cardsPanel.add(coordCard);
+
+        centerContainer.add(cardsPanel, BorderLayout.CENTER);
+        this.add(centerContainer, BorderLayout.CENTER);
+
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 25, 10));
+        bottomPanel.setBackground(new Color(235, 240, 247));
+        bottomPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, borderColor));
+
+        exitButton = new JButton("Exit");
+        exitButton.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        exitButton.setPreferredSize(new Dimension(90, 30));
+        exitButton.setFocusPainted(false);
+        exitButton.addActionListener(this);
+
+        bottomPanel.add(exitButton);
+        this.add(bottomPanel, BorderLayout.SOUTH);
+
         this.setVisible(true);
     }
 
@@ -117,11 +166,9 @@ public class login extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == memberButton) {
             System.out.println("Opening Member Portal...");
-        } 
-        else if (e.getSource() == coordinatorButton) {
+        } else if (e.getSource() == coordinatorButton) {
             System.out.println("Opening Coordinator Portal...");
-        } 
-        else if (e.getSource() == exitButton) {
+        } else if (e.getSource() == exitButton) {
             System.out.println("Closing application...");
             System.exit(0);
         }
