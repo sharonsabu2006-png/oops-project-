@@ -31,6 +31,7 @@ public class ClubDetails {
         JPanel southPanel = new JPanel(new GridLayout(2, 1));
         southPanel.add(new JLabel("Status: Open for Registration", JLabel.CENTER));
         southPanel.add(new JLabel("Contact: ieeecep@gmail.com | +91 9876543210", JLabel.CENTER));
+        southPanel.add(new JButton("JOIN CLUB"));
         frame.add(southPanel, BorderLayout.SOUTH);
 
         frame.setLocationRelativeTo(null);
