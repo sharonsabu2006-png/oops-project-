@@ -1,6 +1,7 @@
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
@@ -28,9 +29,10 @@ public class ClubDetails {
         detailsArea.setEditable(false);
         frame.add(detailsArea, BorderLayout.CENTER);
 
-        JPanel southPanel = new JPanel(new GridLayout(2, 1));
+        JPanel southPanel = new JPanel(new GridLayout(3, 1));
         southPanel.add(new JLabel("Status: Open for Registration", JLabel.CENTER));
         southPanel.add(new JLabel("Contact: ieeecep@gmail.com | +91 9876543210", JLabel.CENTER));
+        southPanel.add(new JButton("JOIN CLUB"));
         frame.add(southPanel, BorderLayout.SOUTH);
 
         frame.setLocationRelativeTo(null);
