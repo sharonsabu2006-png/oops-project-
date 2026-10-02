@@ -6,7 +6,7 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 
-public class ClubsList {
+public class Clubslist {
     public static void main(String[] args) {
         JFrame frame = new JFrame("ClubConnect - Clubs List");
         frame.setSize(600, 500); 

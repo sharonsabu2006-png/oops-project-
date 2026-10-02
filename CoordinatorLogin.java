@@ -1,120 +1,70 @@
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-public class CoordinatorLogin extends JFrame implements ActionListener {
+public class CoordinatorLogin {
 
-    JTextField coordIdField;
-    JComboBox<String> clubBox;
-    JPasswordField passwordField;
-    JCheckBox showPasswordCheck;
-    JButton loginButton;
-    JButton backButton;
+    public CoordinatorLogin() {
+        // 1. Create Window
+        JFrame window = new JFrame("Club Activity Manager - Coordinator Login");
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        window.setSize(400, 280);
+        window.setLayout(null); // Absolute positioning: we manually set x, y coordinates
+        window.setResizable(false);
 
-    CoordinatorLogin() {
-        JLabel titleLabel = new JLabel("Coordinator Login");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 22));
-        titleLabel.setBounds(135, 25, 250, 30);
+        // 2. Create Components
+        JLabel titleLabel = new JLabel("Coordinator Access");
+        titleLabel.setBounds(130, 20, 150, 25);
 
-        JLabel idLabel = new JLabel("Coordinator ID:");
-        idLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        idLabel.setBounds(50, 85, 120, 25);
-
-        coordIdField = new JTextField();
-        coordIdField.setBounds(175, 85, 220, 28);
-
-        JLabel clubLabel = new JLabel("Select Club:");
-        clubLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        clubLabel.setBounds(50, 135, 120, 25);
-
-        String[] clubs = {
-            "Tech Club", 
-            "IEEE Student Branch", 
-            "Cultural Club", 
-            "Sports Club", 
-            "Literary Society", 
-            "NSS Unit"
-        };
-        clubBox = new JComboBox<>(clubs);
-        clubBox.setBounds(175, 135, 220, 28);
+        JLabel idLabel = new JLabel("Faculty/Coord ID:");
+        idLabel.setBounds(40, 70, 120, 25);
+        JTextField idField = new JTextField();
+        idField.setBounds(160, 70, 180, 25);
 
         JLabel passLabel = new JLabel("Password:");
-        passLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        passLabel.setBounds(50, 185, 120, 25);
+        passLabel.setBounds(40, 115, 120, 25);
+        JPasswordField passField = new JPasswordField();
+        passField.setBounds(160, 115, 180, 25);
 
-        passwordField = new JPasswordField();
-        passwordField.setBounds(175, 185, 220, 28);
+        JButton loginButton = new JButton("Login");
+        loginButton.setBounds(80, 170, 100, 30);
 
-        showPasswordCheck = new JCheckBox("Show Password");
-        showPasswordCheck.setBounds(171, 220, 150, 25);
-        showPasswordCheck.setFocusable(false);
-        showPasswordCheck.addActionListener(this);
+        JButton backButton = new JButton("Back");
+        backButton.setBounds(210, 170, 100, 30);
 
-        loginButton = new JButton("Login");
-        loginButton.setBounds(100, 270, 120, 35);
-        loginButton.setFocusable(false);
-        loginButton.addActionListener(this);
-
-        backButton = new JButton("Back");
-        backButton.setBounds(245, 270, 120, 35);
-        backButton.setFocusable(false);
-        backButton.addActionListener(this);
-
-        this.setTitle("ClubConnect - Coordinator Login");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(460, 370);
-        this.setLayout(null);
-        this.setResizable(false);
-
-        this.add(titleLabel);
-        this.add(idLabel);
-        this.add(coordIdField);
-        this.add(clubLabel);
-        this.add(clubBox);
-        this.add(passLabel);
-        this.add(passwordField);
-        this.add(showPasswordCheck);
-        this.add(loginButton);
-        this.add(backButton);
-
-        this.setLocationRelativeTo(null);
-        this.setVisible(true);
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == showPasswordCheck) {
-            if (showPasswordCheck.isSelected()) {
-                passwordField.setEchoChar((char) 0);
-            } else {
-                passwordField.setEchoChar('*');
-            }
-        }
-
-        if (e.getSource() == loginButton) {
-            String id = coordIdField.getText();
-            String pass = new String(passwordField.getPassword());
-            String club = (String) clubBox.getSelectedItem();
+        // 3. Functional Logic (Lambdas)
+        loginButton.addActionListener(e -> {
+            String id = idField.getText();
+            String pass = new String(passField.getPassword());
 
             if (id.isEmpty() || pass.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Please enter Coordinator ID and Password.");
+                JOptionPane.showMessageDialog(window, "Please enter ID and Password.");
             } else {
-                JOptionPane.showMessageDialog(this, "Welcome Coordinator (" + club + ")!");
+                JOptionPane.showMessageDialog(window, "Coordinator Authenticated!");
+                // new CoordinatorDashboard(); // Uncomment when linking
+                // window.dispose();
             }
-        }
+        });
 
-        if (e.getSource() == backButton) {
-            new login();
-            this.dispose();
-        }
+        backButton.addActionListener(e -> {
+            new LoginScreen(); 
+            window.dispose();
+        });
+
+        // 4. Add to Window and Display
+        window.add(titleLabel);
+        window.add(idLabel);
+        window.add(idField);
+        window.add(passLabel);
+        window.add(passField);
+        window.add(loginButton);
+        window.add(backButton);
+
+        window.setLocationRelativeTo(null);
+        window.setVisible(true);
     }
 
     public static void main(String[] args) {
