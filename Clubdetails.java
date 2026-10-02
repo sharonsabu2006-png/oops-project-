@@ -39,3 +39,4 @@ public class ClubDetails {
         frame.setVisible(true);
     }
 }
+
