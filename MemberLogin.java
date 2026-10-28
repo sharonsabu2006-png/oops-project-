@@ -67,7 +67,8 @@ public class MemberLogin {
             if (id.isEmpty() || pass.isEmpty()) {
                 JOptionPane.showMessageDialog(window, "Please enter Member ID and Password.");
             } else {
-                JOptionPane.showMessageDialog(window, "Login Successful!");
+               new DashboardFrame(); 
+                window.dispose();  
             }
         });
 
@@ -79,7 +80,9 @@ public class MemberLogin {
             if (id.isEmpty() || name.isEmpty()) {
                 JOptionPane.showMessageDialog(window, "Please fill all fields to Sign Up.");
             } else {
-                JOptionPane.showMessageDialog(window, "Member Registered: " + name + " (" + sem + ")");
+             new DashboardFrame(); 
+             window.dispose();  
+        
             }
         });
 

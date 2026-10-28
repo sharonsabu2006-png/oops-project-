@@ -41,12 +41,11 @@ public class CoordinatorLogin {
             String pass = new String(passField.getPassword());
 
             if (id.isEmpty() || pass.isEmpty()) {
-                JOptionPane.showMessageDialog(window, "Please enter ID and Password.");
-            } else {
-                JOptionPane.showMessageDialog(window, "Coordinator Authenticated!");
-                // new CoordinatorDashboard(); // Uncomment when linking
-                // window.dispose();
-            }
+                    JOptionPane.showMessageDialog(window, "Please enter ID and Password.");
+            } else { 
+                       CoordinatorDashboard.main(null);
+                    window.dispose();  
+    }
         });
 
         backButton.addActionListener(e -> {
@@ -70,4 +69,4 @@ public class CoordinatorLogin {
     public static void main(String[] args) {
         new CoordinatorLogin();
     }
-}
+} 

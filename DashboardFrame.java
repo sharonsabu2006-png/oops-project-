@@ -51,14 +51,26 @@ public class DashboardFrame extends JFrame {
         JButton viewClubs = new JButton("View Clubs");
         viewClubs.setBounds(40, 330, 140, 40);
         add(viewClubs);
+        viewClubs.addActionListener(e -> {
+           Clubslist.main(null); 
+            dispose(); 
+        });
 
-        JButton viewActivities = new JButton("Activities");
-        viewActivities.setBounds(210, 330, 140, 40);
-        add(viewActivities);
+        JButton viewevents = new JButton("Events");
+        viewevents.setBounds(210, 330, 140, 40);
+        add(viewevents);
+        viewevents.addActionListener(e -> {
+            upcomingeventss.main(null);
+            dispose(); 
+        });
 
         JButton logout = new JButton("Logout");
         logout.setBounds(380, 330, 120, 40);
         add(logout);
+        logout.addActionListener(e -> {
+            new LoginScreen();
+            dispose(); 
+        });
 
         setLocationRelativeTo(null);
         setVisible(true);

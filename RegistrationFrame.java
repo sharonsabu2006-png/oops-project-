@@ -68,6 +68,10 @@ public class RegistrationFrame extends JFrame {
 
         JButton back = new JButton("Back");
         back.setBounds(250, 450, 120, 35);
+        back.addActionListener(e -> {
+             upcomingeventss.main(null);
+            dispose();
+        });
         add(back);
 
         setVisible(true);
