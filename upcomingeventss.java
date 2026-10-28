@@ -91,8 +91,8 @@ public class upcomingeventss extends JFrame {
         add(centerPanel, BorderLayout.CENTER);
 
         JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 10));
+        JButton backBtn = new JButton("Back");
         JButton myRegistrationsBtn = new JButton("My Registered Events");
-        JButton viewDetailsBtn = new JButton("View Event Details");
         JButton registerBtn = new JButton("Register Now");
 
         myRegistrationsBtn.setBackground(new Color(52, 152, 219));
@@ -100,14 +100,32 @@ public class upcomingeventss extends JFrame {
         registerBtn.setBackground(new Color(46, 204, 113));
         registerBtn.setForeground(Color.WHITE);
 
+        actionPanel.add(backBtn);
         actionPanel.add(myRegistrationsBtn);
-        actionPanel.add(viewDetailsBtn);
         actionPanel.add(registerBtn);
         add(actionPanel, BorderLayout.SOUTH);
 
-        registerBtn.addActionListener(e -> JOptionPane.showMessageDialog(this, "Select an event from the table and confirm registration."));
-        viewDetailsBtn.addActionListener(e -> JOptionPane.showMessageDialog(this, "Event details view clicked."));
-        myRegistrationsBtn.addActionListener(e -> JOptionPane.showMessageDialog(this, "Opening registered events view..."));
+        backBtn.addActionListener(e -> {
+            new DashboardFrame(); // Use DashboardFrame.main(null); if your dashboard file runs via main
+            dispose();
+        });
+
+        registerBtn.addActionListener(e -> {
+            int selectedYourClubs = yourClubsTable.getSelectedRow();
+            int selectedOtherClubs = otherClubsTable.getSelectedRow();
+
+            if (selectedYourClubs == -1 && selectedOtherClubs == -1) {
+                JOptionPane.showMessageDialog(this, "Please select an event from one of the tables first.", "No Event Selected", JOptionPane.WARNING_MESSAGE);
+            } else {
+                EventRegistration.main(null); 
+                dispose();
+            }
+        });
+
+        myRegistrationsBtn.addActionListener(e -> { 
+            RegistrationFrame.main(null); 
+            dispose(); 
+        });
     }
 
     public static void main(String[] args) {
