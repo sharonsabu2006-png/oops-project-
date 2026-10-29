@@ -1,3 +1,7 @@
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -8,14 +12,12 @@ import javax.swing.JTextField;
 public class CoordinatorLogin {
 
     public CoordinatorLogin() {
-        // 1. Create Window
         JFrame window = new JFrame("Club Activity Manager - Coordinator Login");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setSize(400, 280);
-        window.setLayout(null); // Absolute positioning: we manually set x, y coordinates
+        window.setLayout(null);
         window.setResizable(false);
 
-        // 2. Create Components
         JLabel titleLabel = new JLabel("Coordinator Access");
         titleLabel.setBounds(130, 20, 150, 25);
 
@@ -35,17 +37,51 @@ public class CoordinatorLogin {
         JButton backButton = new JButton("Back");
         backButton.setBounds(210, 170, 100, 30);
 
-        // 3. Functional Logic (Lambdas)
+        // ------------------ LOGIN ACTION LISTENER ------------------
         loginButton.addActionListener(e -> {
-            String id = idField.getText();
+            String id = idField.getText().trim();
             String pass = new String(passField.getPassword());
 
             if (id.isEmpty() || pass.isEmpty()) {
-                    JOptionPane.showMessageDialog(window, "Please enter ID and Password.");
-            } else { 
-                       CoordinatorDashboard.main(null);
-                    window.dispose();  
-    }
+                JOptionPane.showMessageDialog(window, "Please enter ID and Password.", "Warning", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            String sql = "SELECT coordinator_name, club_name FROM coordinators WHERE coordinator_id = ? AND password = ?";
+
+            try (Connection conn = DatabaseConnection.getConnection();
+                 PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+                stmt.setString(1, id);
+                stmt.setString(2, pass);
+
+                ResultSet rs = stmt.executeQuery();
+
+                if (rs.next()) {
+                    String coordName = rs.getString("coordinator_name");
+                    String clubName = rs.getString("club_name");
+
+                    JOptionPane.showMessageDialog(window, 
+                        "Welcome, " + coordName + "!\nClub: " + clubName, 
+                        "Login Successful", 
+                        JOptionPane.INFORMATION_MESSAGE);
+
+                    CoordinatorDashboard.main(null);
+                    window.dispose();
+                } else {
+                    JOptionPane.showMessageDialog(window, 
+                        "Invalid Coordinator ID or Password.", 
+                        "Access Denied", 
+                        JOptionPane.ERROR_MESSAGE);
+                }
+
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(window, 
+                    "Database Error: " + ex.getMessage(), 
+                    "Error", 
+                    JOptionPane.ERROR_MESSAGE);
+                ex.printStackTrace();
+            }
         });
 
         backButton.addActionListener(e -> {
@@ -53,7 +89,6 @@ public class CoordinatorLogin {
             window.dispose();
         });
 
-        // 4. Add to Window and Display
         window.add(titleLabel);
         window.add(idLabel);
         window.add(idField);
@@ -69,4 +104,4 @@ public class CoordinatorLogin {
     public static void main(String[] args) {
         new CoordinatorLogin();
     }
-} 
+}

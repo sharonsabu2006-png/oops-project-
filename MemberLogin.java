@@ -1,3 +1,7 @@
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -52,6 +56,7 @@ public class MemberLogin {
         JButton backButton = new JButton("Back");
         backButton.setBounds(310, 305, 90, 35);
 
+        // Toggle Password Visibility
         showPasswordCheck.addActionListener(e -> {
             if (showPasswordCheck.isSelected()) {
                 passwordField.setEchoChar((char) 0);
@@ -60,29 +65,89 @@ public class MemberLogin {
             }
         });
 
+        // ------------------ LOGIN BUTTON (DATABASE READ) ------------------
         loginButton.addActionListener(e -> {
-            String id = idField.getText();
+            String id = idField.getText().trim();
             String pass = new String(passwordField.getPassword());
 
             if (id.isEmpty() || pass.isEmpty()) {
-                JOptionPane.showMessageDialog(window, "Please enter Member ID and Password.");
-            } else {
-               new DashboardFrame(); 
-                window.dispose();  
+                JOptionPane.showMessageDialog(window, "Please enter Member ID and Password.", "Warning", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            // SQL Query to verify matching credentials
+            String sql = "SELECT * FROM members WHERE member_id = ? AND password = ?";
+
+            try (Connection conn = DatabaseConnection.getConnection();
+                 PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+                // Bind parameters to ?
+                stmt.setString(1, id);
+                stmt.setString(2, pass);
+
+                // Run query and evaluate result
+                ResultSet rs = stmt.executeQuery();
+
+                if (rs.next()) {
+                    String loggedInName = rs.getString("full_name");
+                    JOptionPane.showMessageDialog(window, "Welcome, " + loggedInName + "!");
+                    
+                    // Passing memberId and full_name to the Dashboard
+                    new DashboardFrame(id, loggedInName);
+                    window.dispose();
+                } else {
+                    JOptionPane.showMessageDialog(window, "Invalid Member ID or Password.", "Login Failed", JOptionPane.ERROR_MESSAGE);
+                }
+
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(window, "Database Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                ex.printStackTrace();
             }
         });
 
+        // ------------------ SIGN UP BUTTON (DATABASE INSERT) ------------------
         signupButton.addActionListener(e -> {
-            String id = idField.getText();
-            String name = nameField.getText();
+            String id = idField.getText().trim();
+            String name = nameField.getText().trim();
             String sem = (String) semesterBox.getSelectedItem();
+            String pass = new String(passwordField.getPassword());
 
-            if (id.isEmpty() || name.isEmpty()) {
-                JOptionPane.showMessageDialog(window, "Please fill all fields to Sign Up.");
-            } else {
-             new DashboardFrame(); 
-             window.dispose();  
-        
+            if (id.isEmpty() || name.isEmpty() || pass.isEmpty()) {
+                JOptionPane.showMessageDialog(window, "Please fill Member ID, Full Name, and Password to Sign Up.", "Warning", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            // SQL Query to insert new member record
+            String sql = "INSERT INTO members (member_id, full_name, semester, password) VALUES (?, ?, ?, ?)";
+
+            try (Connection conn = DatabaseConnection.getConnection();
+                 PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+                // Bind parameters to ?
+                stmt.setString(1, id);
+                stmt.setString(2, name);
+                stmt.setString(3, sem);
+                stmt.setString(4, pass);
+
+                // Execute the insert
+                int rowsInserted = stmt.executeUpdate();
+
+                if (rowsInserted > 0) {
+                    JOptionPane.showMessageDialog(window, "Sign Up Successful! Redirecting to Dashboard...");
+                    
+                    // Passing newly created memberId and name to Dashboard
+                    new DashboardFrame(id, name);
+                    window.dispose();
+                }
+
+            } catch (SQLException ex) {
+                // Duplicate entry handling (primary key conflict)
+                if (ex.getErrorCode() == 1062) {
+                    JOptionPane.showMessageDialog(window, "Member ID '" + id + "' already exists! Try logging in.", "Sign Up Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(window, "Database Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                ex.printStackTrace();
             }
         });
 
